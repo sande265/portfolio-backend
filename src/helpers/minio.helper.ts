@@ -2,11 +2,11 @@ import { Config } from "../config";
 import { Client } from "minio";
 
 export const minioClient = new Client({
-   endPoint: Config.minioUrl?.split("//")[1],
+   endPoint: Config.minioUrl?.split("//")[1] ?? "",
    port: 9000,
    useSSL: false,
    accessKey: Config.minioAccessKey,
-   secretKey: Config.minioSecret,
+   secretKey: Config.minioSecret
 });
 
 export const uploadObject = (file: any, name: string | any, cb: any) => {

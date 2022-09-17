@@ -1,39 +1,14 @@
-# STAGE 1
-FROM node:16 as builder
-
-RUN mkdir -p /usr/app/node_modules && chown -R node:node /usr/app
-
-WORKDIR /usr/app
-
-COPY package.json .
-# RUN npm config set unsafe-perm true
-
-RUN npm install -g typescript
-RUN npm install -g ts-node
-
-USER node
-
-RUN npm install
-
+FROM node:16.9.1-alpine
+WORKDIR /usr
 COPY . .
-
-RUN npm run build
-
-# STAGE 2
-FROM node:16
-
-RUN mkdir -p /usr/app/node_modules && chown -R node:node /usr/app
-
-WORKDIR /usr/app
-
-COPY package.json ./
-
-USER node
-
 RUN npm install
-
-COPY --from=builder /usr/app/dist ./build
-
-EXPOSE 8000
-
-CMD [ "node", "build/server.js" ]
+RUN npm run build
+## this is stage two , where the app actually runs
+FROM node:16.9.1-alpine
+WORKDIR /usr
+COPY package.json ./
+RUN npm install --only=production
+COPY --from=0 /usr/dist .
+RUN npm install pm2 -g
+EXPOSE 80
+CMD ["pm2-runtime", "server.js"]

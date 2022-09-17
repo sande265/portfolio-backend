@@ -1,10 +1,13 @@
-version: '3'
+version: '3.8'
 services:
-  dev:
-    build: .
-    command: npm run build
+  logger:
+    container_name: portfolio-backend
     volumes:
-      - .:/usr/app/
-      - /usr/app/dist
+      - .:/app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
-      - "8000:8000"
+      - 8000:8000
