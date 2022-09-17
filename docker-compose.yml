@@ -1,0 +1,10 @@
+version: '3'
+services:
+  dev:
+    build: .
+    command: npm run build
+    volumes:
+      - .:/usr/app/
+      - /usr/app/dist
+    ports:
+      - "8000:8000"

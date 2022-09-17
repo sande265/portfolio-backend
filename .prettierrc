@@ -1,0 +1,8 @@
+{
+    "tabWidth": 3,
+    "editorconfig": true,
+    "trailingComma": "all",
+    "semi": true,
+    "bracketSpacing": true,
+    "printWidth": 140
+}
