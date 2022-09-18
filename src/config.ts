@@ -9,6 +9,8 @@ declare interface ConfigOptions {
    minioBucket: string | any;
    minioUrl: string | any;
    fileSizeLimit: string | any;
+   publicKey: string | any;
+   privateKey: string | any;
 }
 
 export const Config: ConfigOptions = {
@@ -18,6 +20,8 @@ export const Config: ConfigOptions = {
    minioBucket: process.env.MINIO_BUCKET,
    minioUrl: process.env.MINIO_URL,
    fileSizeLimit: process.env.FILE_SIZE_LIMIT || 1024 * 500,
+   publicKey: process.env.PUBLIC_KEY,
+   privateKey: process.env.PRIVATE_KEY
 };
 
 export const FileTypes: DataObj = {

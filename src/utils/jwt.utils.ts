@@ -3,6 +3,7 @@ import { Schema } from 'mongoose';
 import * as fs from 'fs';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
+import { Config } from '../config';
 require("dotenv").config()
 
 const secret: string = process.env.SECRET ?? "";
@@ -33,7 +34,15 @@ interface PayloadTypes {
 export const generateToken = (payload: PayloadTypes, iss: string): Object | string => {
 
   // read private key value
-  const privateKey = fs.readFileSync(path.join(__dirname, './../../../private.key'));
+  const privateKey = (): Buffer | string => {
+    try {
+      return fs.readFileSync(path.join(__dirname, './../../../private.key'));
+    } catch (error: any) {
+      console.log("Error: ", error.message);
+      console.log("Using ENV keys");
+      return Config.privateKey;
+    }
+  }
 
   const token_expiry: any = process.env.TOKEN_EXP;
   const rt_expiry: number | string | undefined = process.env.RT_EXP || token_expiry * 2;
@@ -59,7 +68,7 @@ export const generateToken = (payload: PayloadTypes, iss: string): Object | stri
 
   // generate JWT
   try {
-    const token = sign(modifiedPayload, { key: privateKey, passphrase: secret }, signInOptions);
+    const token = sign(modifiedPayload, { key: privateKey(), passphrase: secret }, signInOptions);
     const rt = sign({ owner: payload?._id, jti: randomUUID() }, secret, { expiresIn: rt_expiry ?? parseInt(token_expiry) * 2 });
 
     return {
@@ -86,14 +95,22 @@ interface TokenPayload {
  * @param token the expected token payload
  */
 export const validateToken = (token: string): Promise<TokenPayload> => {
-  const publicKey = fs.readFileSync(path.join(__dirname, './../../../public.key'));
+  const publicKey = (): Buffer | string  => {
+    try {
+      return fs.readFileSync(path.join(__dirname, './../../../public.key'))
+    } catch (error: any) {
+      console.log("Error: ", error.message);
+      console.log("Using ENV keys");
+      return Config.publicKey;
+    }
+  }
 
   const verifyOptions: VerifyOptions = {
     algorithms: ['RS256'],
   };
 
   return new Promise((resolve, reject) => {
-    verify(token, publicKey, verifyOptions, (error, decoded: any) => {
+    verify(token, publicKey(), verifyOptions, (error, decoded: any) => {
       if (error) return reject(error);
       resolve(decoded);
     })

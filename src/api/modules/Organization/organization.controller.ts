@@ -12,6 +12,7 @@ export const Constants = {
       website: ["string"],
       location: ["string"],
       country: ["required"],
+      description: ["string"]
    },
 };
 

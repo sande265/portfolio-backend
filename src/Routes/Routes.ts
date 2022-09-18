@@ -3,11 +3,11 @@ import { getPublicFile } from "../api/modules/Attachment/attachment.controller";
 import { AttachmentsApi } from "../api/modules/Attachment/attachment.route";
 import { experienceApi } from "../api/modules/Experience/experience.route";
 import { featuredApi } from "../api/modules/Featured/featured.route";
+import { libraryApi } from "../api/modules/Libraries/library.route";
 import { authApi } from "../api/modules/Oauth/oauth.route";
 import { organizationsApi } from "../api/modules/Organization/organization.route";
 import { projectsApi } from "../api/modules/Project/project.route";
 import { usersApi } from "../api/modules/User/user.route";
-// import { workplaceApi } from "../api/modules/Experience/experience.route";
 
 const router: Router = Router();
 
@@ -19,6 +19,7 @@ router.use("/attachment/v1/", AttachmentsApi);
 router.use("/organization/v1/", organizationsApi)
 router.use("/experience/v1/", experienceApi);
 router.use("/media/:name", getPublicFile);
+router.use("/library/v1/", libraryApi)
 
 router.use("*", (req: Request, res: Response) => {
    res.status(404);

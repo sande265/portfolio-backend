@@ -19,6 +19,10 @@ const ExperienceSchema = new Schema(
          type: Schema.Types.Date,
          default: null
       },
+      description: {
+         type: Schema.Types.String,
+         required: true,
+      },
       html: {
          type: Schema.Types.String,
          required: true,
