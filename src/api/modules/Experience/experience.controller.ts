@@ -10,7 +10,7 @@ export const Constants = {
       title: ["required"],
       organization: ["required"],
       from: ["required", "date"],
-      to: ["date"],
+      to: [""],
       description: ["required"],
       html: ["required","string"],
    }
