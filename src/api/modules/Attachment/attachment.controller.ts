@@ -12,6 +12,7 @@ export const Constants = {
    validationRule: {
       name: ["required"],
       image: ["required"],
+      status: ["required"]
    },
    fileSize: Config.fileSizeLimit,
 };

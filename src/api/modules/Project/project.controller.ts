@@ -5,13 +5,14 @@ import { Projects } from "../../Schemas";
 import { drop, index, indexOne, insert, modify } from "./project.module";
 
 export const Constants = {
-   module: "Projects",
+   module: "Project",
    validationRule: {
       title: ["required"],
       tech: ["required", "array"],
       github: ["required"],
       external: ["string"],
       html: ["string"],
+      status: ["required"]
    }
 };
 
@@ -93,7 +94,7 @@ export const getProjects = async (req: Request, res: Response) => {
 
    const count = await Projects.countDocuments({ limit, page });
 
-   index({ limit: limit, page: page }, (err: any, result: Array<[]>) => {
+   index({ limit: limit, page: page }, (err: any, result: Array<[]>) => {      
       if (err)
          res.status(500).json({
             message: "Somthing went wrong",

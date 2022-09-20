@@ -6,9 +6,9 @@ export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Fu
       Featured.find(filter, {}, { limit: limit, sort: sortBy, skip: skips })
          .populate({
             path: "project",
-            select: "title tech github external html"
+            select: "title tech github external html",
          })
-         .populate("attachments", "name image height width")
+         .populate({ path: "attachments", select: "name image height width" })
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);

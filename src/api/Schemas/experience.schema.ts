@@ -27,6 +27,10 @@ const ExperienceSchema = new Schema(
          type: Schema.Types.String,
          required: true,
       },
+      status: {
+         type: Schema.Types.Boolean,
+         required: true,
+      },
    },
    { timestamps: true, versionKey: false, collection: "experiences" },
 );

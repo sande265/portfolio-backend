@@ -30,3 +30,7 @@ export const checkFileConstraints = (file: Express.Multer.File, type: string, ma
         return false
     }
 }
+
+export const checkIfValidID = (_id: string) => {
+    return _id.length === 24;
+}

@@ -13,6 +13,7 @@ export const Constants = {
       to: [""],
       description: ["required"],
       html: ["required","string"],
+      status: ["required"]
    }
 };
 

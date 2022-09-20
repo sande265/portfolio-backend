@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
 import { localValidation } from "../../../helpers";
 import { paginate } from "../../../middlewares";
-import { Featured } from "../../Schemas";
+import { checkIfValidID } from "../../../shared";
+import { Attachment, Featured, Projects } from "../../Schemas";
 import { drop, index, indexOne, insert, modify } from "./featured.module";
 
 export const Constants = {
    module: "Featured Project",
    validationRule: {
       title: ["required"],
-      attachment_ids: ["required", "array"],
-      project_id: ["required", "string"],
+      attachments: ["required", "array"],
+      project: ["required", "string"],
       cta: ["string"],
+      status: ["required"],
    },
 };
 
@@ -22,27 +24,74 @@ export const createFeatured = (req: Request, res: Response) => {
          message: error,
       });
    } else {
-      insert(body, (err: any, result: any) => {
-         if (err) {
-            if (err.code === 11000) {
-               let key = err?.keyPattern && Object.keys(err?.keyPattern)[0];
-               res.status(422).json({
-                  message: `${Constants.module} with the provided ${key} already exists`,
-                  error: err,
-               });
-            } else
-               res.status(500).json({
-                  message: "Something went wrong",
-                  _diag: err,
-               });
-         } else {
-            delete result?.password;
-            res.json({
-               message: `${Constants.module} created successfully.`,
-               id: result?.id,
-            });
+      new Promise(async (resolve, reject) => {
+         let attachments: boolean[] = [];
+         let errors: any = {};
+         let project: any = {};
+         if (checkIfValidID(body.project)) project = await Projects.findOne({ _id: body.project });
+         else {
+            errors = {
+               ...errors,
+               attachment: "Project ID is invalid.",
+            };
          }
-      });
+         body.attachments.map(async (media: any, idx: number) => {
+            try {
+               const result = await Attachment.findOne({ _id: media });
+               attachments.push(!!result);
+               if (!project) {
+                  errors = {
+                     ...errors,
+                     project: "Project with the given ID not found.",
+                  };
+               } else if (!result) {
+                  errors = {
+                     ...errors,
+                     [`attachments.${idx}`]: "Attachment with provide ID not found.",
+                  };
+               }
+            } catch (e: any) {
+               errors = {
+                  ...errors,
+                  [`attachments.${idx}`]: checkIfValidID(media) ? e.message : "Attachment ID invalid.",
+               };
+            }
+            if (idx === body.attachments.length - 1) {
+               if (project && attachments.length > 0) resolve({ message: "All Found" });
+               else if (Object.keys(errors).length > 0) {
+                  reject({ message: errors });
+               }
+            }
+         });
+      })
+         .then(() => {
+            insert(body, (err: any, result: any) => {
+               if (err) {
+                  if (err.code === 11000) {
+                     let key = err?.keyPattern && Object.keys(err?.keyPattern)[0];
+                     res.status(422).json({
+                        message: `${Constants.module} with the provided ${key} already exists`,
+                        error: err,
+                     });
+                  } else
+                     res.status(500).json({
+                        message: "Something went wrong",
+                        _diag: err,
+                     });
+               } else {
+                  delete result?.password;
+                  res.json({
+                     message: `${Constants.module} created successfully.`,
+                     id: result?.id,
+                  });
+               }
+            });
+         })
+         .catch((err) => {
+            res.json({
+               message: err.message,
+            });
+         });
    }
 };
 

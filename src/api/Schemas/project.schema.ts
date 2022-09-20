@@ -20,7 +20,11 @@ const ProjectSchema = new Schema({
     html: {
         type: Schema.Types.String,
         default: null
-    }
+    },
+    status: {
+        type: Schema.Types.Boolean,
+        required: true,
+     }
 }, { timestamps: true, versionKey: false, toJSON: { virtuals: true }, collection: "projects" });
 
 export const Projects = model("Project", ProjectSchema);

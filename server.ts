@@ -16,11 +16,7 @@ app.use('/uploads', express.static('uploads'))
 
 app.use(httpLogger());
 app.use(helmet());
-app.use(
-  useCors({
-    sameSite: true,
-  })
-);
+app.use(useCors());
 app.use(checkDbConnection());
 
 app.get("/", (req: Request, res: Response) => {

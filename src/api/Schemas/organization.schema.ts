@@ -24,7 +24,11 @@ const OrganizationSchema = new Schema({
     description: {
         type: Schema.Types.String,
         default: null
-    }
+    },
+    status: {
+        type: Schema.Types.Boolean,
+        required: true,
+     }
 }, { timestamps: true, versionKey: false, collection: "organization" });
 
 export const Organization = model("Organization", OrganizationSchema);
