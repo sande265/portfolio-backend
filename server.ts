@@ -1,9 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import { routes } from "./src/Routes/Routes";
-import helmet from "helmet";
 import { useCors, checkDbConnection, httpLogger } from "./src/middlewares";
-import dotenv from "dotenv";
 import { initateDB } from "./src/database";
+import helmet from "helmet";
+import dotenv from "dotenv";
 
 const app: Express = express();
 dotenv.config();

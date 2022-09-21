@@ -3,7 +3,7 @@ import { localValidation, deleteAllObjects, getObject, uploadObject } from "../.
 import { paginate } from "../../../middlewares";
 import { Attachment } from "../../Schemas";
 import { drop, index, indexOne, insert, modify } from "./attachment.module";
-import { checkFileConstraints, getFileExtension, getMimeType } from "../../../shared";
+import { checkFileConstraints, getFileExtension, getMaxUploadSize, getMimeType } from "../../../shared";
 import sharp, { Sharp } from "sharp";
 import { Config } from "../../../config";
 
@@ -11,8 +11,8 @@ export const Constants = {
    module: "Attachments",
    validationRule: {
       name: ["required"],
-      image: ["required"],
-      status: ["required"]
+      media: ["required"],
+      status: ["required"],
    },
    fileSize: Config.fileSizeLimit,
 };
@@ -32,17 +32,6 @@ export const getPublicFile = (req: Request, res: Response) => {
          width = parseInt(width);
          if (getMimeType(name)?.includes("image")) {
             let type: any = getFileExtension(name);
-            // sharp(result)
-            //    .resize({ height: height ? height : undefined, width: width ? width : undefined })
-            //    .toFormat("jpeg")
-            //    .jpeg({ quality: quality ? quality : undefined })
-            //    .toFormat(type)
-            //    .toBuffer()
-            //    .then((data) => {
-            //       res.writeHead(200, { "Content-Type": getMimeType(name) });
-            //       res.write(data);
-            //       res.end();
-            //    });
             if (width || height || quality) {
                const streamImage: Sharp = sharp({ failOnError: true });
                streamImage
@@ -61,9 +50,25 @@ export const getPublicFile = (req: Request, res: Response) => {
                res.writeHead(206, { "Content-Type": getMimeType(name) });
                result.pipe(res);
             }
+         } else if (getMimeType(name)?.includes("application")) {
+            let data: any;
+            result.on("data", function (chunk: any) {
+               data = !data ? Buffer.from(chunk) : Buffer.concat([data, chunk]);
+            });
+            result.on("end", function () {
+               res.writeHead(200, {
+                  "Content-Type": getMimeType(name),
+                  "Content-Length": data?.length,
+                  "Content-Disposition": `attachment; filename="${name}"`
+               })
+               res.end(data)
+            });
+            result.on("error", function (err: Error) {
+               console.log("Error Converting Application");
+            });
          } else {
-            res.setHeader("Content-Type", getMimeType(name))
-            res.setHeader("Content-Disposition", `attachment filename="${name}"`)
+            res.setHeader("Content-Type", getMimeType(name));
+            res.setHeader("Content-Disposition", `attachment; filename="${name}"`);
             result.pipe(res);
          }
       }
@@ -71,20 +76,24 @@ export const getPublicFile = (req: Request, res: Response) => {
 };
 
 export const createAttachment = (req: Request, res: Response) => {
-   if (req.file && checkFileConstraints(req.file, getMimeType(req.file?.originalname), Constants.fileSize)) {
+   if (
+      req.file &&
+      checkFileConstraints(req.file, getMimeType(req.file?.originalname), getMaxUploadSize(getMimeType(req.file?.originalname)))
+   ) {
+      const type = getMimeType(req.file?.originalname);
       res.status(413).json({
          message: "File size is greater than allowed limit.",
          file_name: req.file?.originalname,
-         max_file_fize: `${parseFloat(`${Constants.fileSize / 1024}`).toFixed(2)} KB`,
+         max_file_fize: `${parseFloat(`${getMaxUploadSize(type)}`).toFixed(2)} KB`,
          current_file_size: `${parseFloat(`${req.file?.buffer?.length / 1024}`).toFixed(2)} KB`,
          status_code: 413,
       });
    } else {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const fileName = uniqueSuffix.toString() + "-" + req.file?.originalname;
+      const fileName = uniqueSuffix.toString() + "-" + req?.file?.originalname?.replace(/[^a-zA-Z_.]/g, "");
 
       let body = req.body;
-      body["image"] = req.file;
+      body["media"] = req.file;
       const { error, localvalidationerror } = localValidation(body, Constants.validationRule, {}, false);
       if (localvalidationerror) {
          res.status(422).json({
@@ -92,10 +101,10 @@ export const createAttachment = (req: Request, res: Response) => {
          });
       } else {
          const body: any = req.body;
-         const baseUrl = `${req.protocol}://${req.headers.host}`
+         const baseUrl = `${req.protocol}://${req.headers.host}`;
 
          if (req.file) {
-            body["image"] = `${baseUrl}/api/media/${fileName}`;
+            body["media"] = `${baseUrl}/api/media/${fileName}`;
          }
 
          insert(body, (err: Error, result: DataObj) => {
@@ -184,7 +193,7 @@ export const getAttachments = async (req: Request, res: Response) => {
             _diag: err,
             error: true,
          });
-      if (result.length <= 0) {
+      else if (result.length <= 0) {
          res.sendStatus(204);
       } else {
          res.json(paginate(result, limit, count, page));
@@ -201,7 +210,7 @@ export const getAttachment = (req: Request, res: Response) => {
             _diag: err,
             error: true,
          });
-      if (!result || Object.keys(result).length <= 0) {
+      else if (!result || Object.keys(result).length <= 0) {
          res.sendStatus(204);
       } else {
          res.json({

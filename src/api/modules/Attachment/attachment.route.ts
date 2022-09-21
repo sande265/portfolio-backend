@@ -7,7 +7,7 @@ const router: Router = Router();
 
 router.get("/attachments", authorize, getAttachments);
 router.get("/attachments/:id", authorize, getAttachment);
-router.post("/attachments", FileFilter.single("image"), authorize, createAttachment);
+router.post("/attachments", FileFilter.single("media"), authorize, createAttachment);
 router.patch("/attachments/:id", authorize, updateAttachment);
 router.delete("/attachments", authorize, deleteAttachments);
 

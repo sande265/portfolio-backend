@@ -6,7 +6,24 @@ const AboutSchema: Schema = new Schema(
          type: Schema.Types.String,
          required: true,
       },
+      email: {
+         type: Schema.Types.String,
+         required: true,
+      },
+      contact: {
+         type: Schema.Types.String,
+         required: true,
+      },
+      country: {
+         type: Schema.Types.Mixed,
+         required: true,
+      },
       attachment: {
+         type: Schema.Types.ObjectId,
+         ref: "Attachment",
+         required: true,
+      },
+      resume: {
          type: Schema.Types.ObjectId,
          ref: "Attachment",
          required: true,

@@ -6,17 +6,17 @@ const AttachmentSchema: Schema = new Schema(
          type: Schema.Types.String,
          required: true,
       },
-      image: {
+      media: {
          type: Schema.Types.String,
-         // match: /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/
+         required: true,
       },
       height: {
          type: Schema.Types.Number,
-         default: 438,
+         default: null,
       },
       width: {
          type: Schema.Types.Number,
-         default: 700,
+         default: null,
       },
       status: {
          type: Schema.Types.Boolean,

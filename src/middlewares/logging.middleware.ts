@@ -35,7 +35,7 @@ export const httpLogger = (options?: LoggerOptions) => (req: Request, res: Respo
          ":" +
          current_datetime.getSeconds();
       const method = req.method;
-      const url = req.baseUrl + req.url;
+      const url = `${req.baseUrl ?? ""}${req.url}`;
       const requestedBy = req.ip;   
       const status = res.statusCode;
       const durationInMilliseconds = getActualRequestDurationInMilliseconds(start);

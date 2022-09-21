@@ -8,7 +8,8 @@ export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Fu
             path: "showcase",
             select: "name organization website country location description",
          })
-         .populate({ path: "attachment", select: "name image height width" })
+         .populate({ path: "attachment", select: "name media height width" })
+         .populate({ path: "resume", select: "name media" })
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);

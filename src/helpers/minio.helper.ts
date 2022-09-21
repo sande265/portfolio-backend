@@ -6,7 +6,7 @@ export const minioClient = new Client({
    port: 9000,
    useSSL: false,
    accessKey: Config.minioAccessKey,
-   secretKey: Config.minioSecret
+   secretKey: Config.minioSecret,
 });
 
 export const uploadObject = (file: any, name: string | any, cb: any) => {
@@ -25,19 +25,7 @@ export const getObject = (name: string, callback: CallableFunction) => {
          if (err) {
             return callback(err);
          } else {
-            // if (getMimeType(name).includes("image")) {
-            //    stream.on("data", function (chunk: any) {
-            //       data = !data ? Buffer.from(chunk) : Buffer.concat([data, chunk]);
-            //    });
-            //    stream.on("end", function () {
-            //       callback(null, data);
-            //    });
-            //    stream.on("error", function (err: Error) {
-            //       callback(err);
-            //    });
-            // } else {
-               callback(null, stream);
-            // }
+            callback(null, stream);
          }
       });
    } catch (error) {

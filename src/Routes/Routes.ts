@@ -23,12 +23,12 @@ router.use("/media/:name", getPublicFile);
 
 router.use("*", (req: Request, res: Response) => {
    res.status(404);
-   if (req?.headers?.accept?.indexOf("html"))
+   if (req?.headers?.accept?.indexOf("html")) {
       // res.render('404', { url: req.protocol + '://' + req.get('host') + req.originalUrl })
       res.json({
          message: "Route not found",
       });
-   else res.send("URL cannot found");
+   } else res.send("URL cannot found");
 });
 
 export { router as routes };

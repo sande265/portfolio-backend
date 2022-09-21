@@ -21,6 +21,10 @@ const ProjectSchema = new Schema({
         type: Schema.Types.String,
         default: null
     },
+    order: {
+        type: Schema.Types.Number,
+        default: 0
+    },
     status: {
         type: Schema.Types.Boolean,
         required: true,

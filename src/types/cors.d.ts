@@ -3,4 +3,5 @@ declare interface CorsOptions {
   credentials?: boolean;
   origin?: Origin;
   sameSite?: boolean;
+  optionsStatus: number
 }

@@ -12,8 +12,10 @@ export const Constants = {
       github: ["required"],
       external: ["string"],
       html: ["string"],
-      status: ["required"]
-   }
+      status: ["required"],
+      order: ["required"],
+      resume: ["required"]
+   },
 };
 
 export const createProject = (req: Request, res: Response) => {
@@ -51,7 +53,7 @@ export const createProject = (req: Request, res: Response) => {
 export const updateProject = (req: Request, res: Response) => {
    const { id } = req.params;
    const body: any = req.body;
-   const { error, localvalidationerror } = localValidation(body,  Constants.validationRule, {}, false);
+   const { error, localvalidationerror } = localValidation(body, {}, {}, false);
    if (localvalidationerror) {
       res.status(422).json({
          message: error,
@@ -89,19 +91,25 @@ export const deleteProjects = (req: Request, res: Response) => {
 };
 
 export const getProjects = async (req: Request, res: Response) => {
-   let { limit, q, page }: any = req.query;
+   let { limit, q, page, filter, sort_by, sort_field }: any = req.query;
    limit = limit ? parseInt(limit) : 10;
 
-   const count = await Projects.countDocuments({ limit, page });
+   let itemFilter = {
+      ...filter,
+   };
 
-   index({ limit: limit, page: page }, (err: any, result: Array<[]>) => {      
+   if (q) itemFilter = { ...itemFilter, title: { $regex: ".*" + q + ".*" } };
+
+   const count = await Projects.countDocuments(itemFilter);
+
+   index({ limit: limit, page: page, sortBy: sort_by, sortField: sort_field, filter: itemFilter }, (err: any, result: Array<[]>) => {
       if (err)
          res.status(500).json({
             message: "Somthing went wrong",
             _diag: err,
             error: true,
          });
-      if (result.length <= 0) {
+      else if (result?.length <= 0) {
          res.sendStatus(204);
       } else {
          res.json(paginate(result, limit, count, page));
@@ -118,13 +126,10 @@ export const getProject = (req: Request, res: Response) => {
             _diag: err,
             error: true,
          });
-      if (!result || Object.keys(result).length <= 0) {
+      else if (!result || Object.keys(result)?.length <= 0) {
          res.sendStatus(204);
       } else {
-         res.json({
-            data: result,
-            id: id,
-         });
+         res.json(result);
       }
    });
 };
