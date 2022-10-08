@@ -13,8 +13,7 @@ export const Constants = {
       external: ["string"],
       html: ["string"],
       status: ["required"],
-      order: ["required"],
-      resume: ["required"]
+      order: ["required"]
    },
 };
 

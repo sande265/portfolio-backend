@@ -8,7 +8,7 @@ export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Fu
             path: "project",
             select: "title tech github external html",
          })
-         .populate({ path: "attachments", select: "name image height width" })
+         .populate({ path: "attachments", select: "name media height width" })
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);
