@@ -24,6 +24,11 @@ openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 ```
 Optional Rename the keys with extenstion .key
 
+Docker Componse
+```bash
+docker-compose up 
+```
+
 ## Environment variables used patter
 ```javascript
 PORT=// Your app port here for development

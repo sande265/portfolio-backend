@@ -136,12 +136,18 @@ export const deleteFeatureds = (req: Request, res: Response) => {
 };
 
 export const getFeatureds = async (req: Request, res: Response) => {
-   let { limit, q, page }: any = req.query;
+   let { limit, q, page, filter, sort_by, sort_field }: any = req.query;
    limit = limit ? parseInt(limit) : 10;
 
-   const count = await Featured.countDocuments({ limit, page });
+   let itemFilter = {
+      ...filter,
+   };
 
-   index({ limit: limit, page: page }, (err: any, result: Array<[]>) => {
+   if (q) itemFilter = { ...itemFilter, title: { $regex: q, $options: "i" } };
+
+   const count = await Featured.countDocuments(itemFilter);
+
+   index({ limit: limit, page: page, sortBy: sort_by, sortField: sort_field, filter: itemFilter }, (err: any, result: Array<[]>) => {
       if (err)
          res.status(500).json({
             message: "Somthing went wrong",

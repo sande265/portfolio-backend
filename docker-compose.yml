@@ -1,15 +1,16 @@
-version: '3.8'
+version: '3'
 services:
-  logger:
-    container_name: portfolio-backend
-    volumes:
-      - .:/app
+  api:
     build:
       context: .
-      dockerfile: Dockerfile
-      args: 
-        secret: sandetechtips
+      args:
+        - secret=sandetechtips
+    container_name: backend
+    image: sande265/portfolio-backend
     env_file:
-      - .env
+      - ./.env
+    volumes:
+      - .:/usr/app
+      - /usr/app/node_modules
     ports:
       - 8000:8000

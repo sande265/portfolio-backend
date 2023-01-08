@@ -1,14 +1,17 @@
 import { Featured } from "../../Schemas";
 
-export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Function) => {
+export const index = ({ limit, page, sortBy, sortField, filter }: queryParams, callback: Function) => {
    const skips = page * limit - limit;
    try {
-      Featured.find(filter, {}, { limit: limit, sort: sortBy, skip: skips })
+      Featured.find(filter)
          .populate({
             path: "project",
             select: "title tech github external html",
          })
          .populate({ path: "attachments", select: "name media height width" })
+         .limit(limit)
+         .skip(skips)
+         .sort(sortField && sortBy ? { [sortField]: sortBy === "asc" ? 1 : -1 } : {})
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);

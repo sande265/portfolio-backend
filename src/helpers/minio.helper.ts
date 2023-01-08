@@ -2,7 +2,7 @@ import { Config } from "../config";
 import { Client } from "minio";
 
 export const minioClient = new Client({
-   endPoint: Config.minioUrl?.split("//")[1] ?? "",
+   endPoint: Config.minioUrl?.split("//")[1] ?? "127.0.0.1",
    port: 9000,
    useSSL: false,
    accessKey: Config.minioAccessKey,
@@ -19,7 +19,6 @@ export const uploadObject = (file: any, name: string | any, cb: any) => {
 };
 
 export const getObject = (name: string, callback: CallableFunction) => {
-   let data: any;
    try {
       minioClient.getObject(Config.minioBucket, name, function (err, stream) {
          if (err) {
