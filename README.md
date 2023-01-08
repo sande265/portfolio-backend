@@ -26,6 +26,7 @@ Optional Rename the keys with extenstion .key
 
 Docker Componse
 ```bash
+docker build -t username/tagName --build-arg secret=yoursecret
 docker-compose up 
 ```
 
