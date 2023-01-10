@@ -11,7 +11,7 @@ export const Constants = {
       email: ["required", "email"],
       contact: ["required"],
       country: ["required"],
-      resume: [""],
+      resume: ["required"],
       attachment: ["required"],
       showcase: ["required", "array"],
       status: ["required"],

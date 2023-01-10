@@ -101,7 +101,8 @@ export const createAttachment = (req: Request, res: Response) => {
          });
       } else {
          const body: any = req.body;
-         const baseUrl = `${req.protocol}://${req.headers.host}`;
+         const localURL = req.baseUrl
+         const baseUrl = process.env.ENV === "development" ? req.protocol + "://" +req.hostname : Config.appUrl;
 
          if (req.file) {
             body["media"] = `${baseUrl}/api/media/${fileName}`;
