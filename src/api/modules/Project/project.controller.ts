@@ -9,7 +9,7 @@ export const Constants = {
    validationRule: {
       title: ["required"],
       tech: ["required", "array"],
-      github: ["required"],
+      github: ["string"],
       external: ["string"],
       html: ["string"],
       status: ["required"],

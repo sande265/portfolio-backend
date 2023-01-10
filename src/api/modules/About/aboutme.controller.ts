@@ -32,11 +32,19 @@ export const createAbout = async (req: Request, res: Response) => {
          let orgs: boolean[] = [];
          let errors: any = {};
          let attachment: any;
+         let resume: any;
          if (body.attachment.length === 24) attachment = await Attachment.findOne({ _id: body.attachment });
          else {
             errors = {
                ...errors,
                attachment: "Attachment ID is invalid.",
+            };
+         }
+         if (body.resume.length === 24) resume = await Attachment.findOne({ _id: body.resume });
+         else {
+            errors = {
+               ...errors,
+               attachment: "Attachment ID for resume is invalid.",
             };
          }
          body.showcase.map(async (org: string, idx: number) => {
