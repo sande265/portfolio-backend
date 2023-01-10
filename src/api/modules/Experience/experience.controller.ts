@@ -13,7 +13,10 @@ export const Constants = {
       to: [""],
       description: ["required"],
       html: ["required","string"],
-      status: ["required"]
+      status: ["required", {
+         param: "in",
+         values: [1, 0]
+      }],
    }
 };
 

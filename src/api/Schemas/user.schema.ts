@@ -39,8 +39,9 @@ const UserSchema = new Schema(
          ref: "Config",
       },
       status: {
-         type: Schema.Types.Boolean,
-         required: true,
+         type: Schema.Types.Number,
+         required: false,
+         default: 1,
       },
    },
    { timestamps: true, versionKey: false, collection: "users" },
@@ -68,7 +69,7 @@ try {
                   email: "admin@sandeshsingh.com.np",
                   password: hashSync(password, salt),
                   contact: 1234567890,
-                  status: true
+                  status: 1,
                },
                (err: any, result: DataObj) => {
                   if (err && err.code !== 11000) console.log("Error: ", err);

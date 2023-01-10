@@ -13,7 +13,10 @@ const Constants = {
         password: ["password"],
         contact: ["string", "number"],
         role: ["*"],
-        status: ["required"]
+        status: ["required", {
+            param: "in",
+            values: [1, 0]
+         }],
     }
 }
 

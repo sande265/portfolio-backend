@@ -12,7 +12,10 @@ export const Constants = {
       attachments: ["required", "array"],
       project: ["required", "string"],
       cta: ["string"],
-      status: ["required"],
+      status: ["required", {
+         param: "in",
+         values: [1, 0]
+      }],
    },
 };
 

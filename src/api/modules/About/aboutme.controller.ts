@@ -13,8 +13,14 @@ export const Constants = {
       country: ["required"],
       resume: ["required"],
       attachment: ["required"],
-      showcase: ["required", "array"],
-      status: ["required"],
+      organization: ["required"],
+      status: [
+         "required",
+         {
+            param: "in",
+            values: [1, 0],
+         },
+      ],
       tech_stack: ["required", "array"],
       description: ["required"],
    },
@@ -22,7 +28,7 @@ export const Constants = {
 
 export const createAbout = async (req: Request, res: Response) => {
    const body: any = req.body;
-   const { error, localvalidationerror } = localValidation(body, Constants.validationRule, {}, false);
+   const { localvalidationerror, error } = localValidation(body, Constants.validationRule, {}, false);
    if (localvalidationerror) {
       res.status(422).json({
          message: error,
@@ -33,51 +39,40 @@ export const createAbout = async (req: Request, res: Response) => {
          let errors: any = {};
          let attachment: any;
          let resume: any;
-         if (body.attachment.length === 24) attachment = await Attachment.findOne({ _id: body.attachment });
-         else {
+         if (body?.attachment?.length === 24) attachment = await Attachment.findOne({ _id: body.attachment });
+         if (body?.resume?.length === 24) resume = await Attachment.findOne({ _id: body.resume });
+         if (!attachment) {
             errors = {
                ...errors,
-               attachment: "Attachment ID is invalid.",
+               attachment: "Invalid attachment id Provided.",
             };
          }
-         if (body.resume.length === 24) resume = await Attachment.findOne({ _id: body.resume });
-         else {
+         if (!resume) {
             errors = {
                ...errors,
-               attachment: "Attachment ID for resume is invalid.",
+               resume: "Invalid attachment id for resume Provided.",
             };
          }
-         body.showcase.map(async (org: string, idx: number) => {
-            try {
-               const result = await Organization.findOne({ _id: org });
-               orgs.push(!!result);
-               if (!attachment) {
-                  errors = {
-                     ...errors,
-                     attachment: "Attachment with the given ID not found.",
-                  };
-               } else if (!result) {
-                  errors = {
-                     ...errors,
-                     [`organization.${idx}`]: "Organization with provide ID not found.",
-                  };
-               }
-            } catch (e: any) {
+         body.organization.forEach(async (org: string, idx: number) => {
+            const result = await Organization.findOne({ _id: org });
+            if (!result) {
                errors = {
                   ...errors,
-                  [`organization.${idx}`]: org.length === 24 ? e.message : "Organization ID invalid.",
+                  [`organization.${idx}._id`]: "Invalid organization id " + org + " provided.",
                };
+            } else {
+               if (result) orgs.push(!!result);
             }
-            if (idx === body.showcase.length - 1) {
-               if (attachment && orgs.length > 0) resolve({ message: "All Found" });
+            if (body.organization.length - 1 === idx) {
+               if (attachment && resume && orgs.length > 0) resolve({ message: "All Found" });
                else if (Object.keys(errors).length > 0) {
-                  reject({ message: errors });
+                  reject({ message: errors })
                }
             }
          });
       })
          .then(() => {
-            About.find({ status: true }).then((result: Array<DataObj>) => {
+            About.find({ status: 0 }).then((result: Array<DataObj>) => {
                if (result.length > 0) {
                   res.json({ message: "Another Aboutme with status active already exists." });
                } else {
@@ -106,7 +101,7 @@ export const createAbout = async (req: Request, res: Response) => {
             });
          })
          .catch((err) => {
-            res.json({
+            res.status(422).json({
                message: err.message,
             });
          });

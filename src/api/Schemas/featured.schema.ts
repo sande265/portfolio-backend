@@ -23,8 +23,9 @@ const FeaturedSchema: Schema = new Schema(
          },
       ],
       status: {
-         type: Schema.Types.Boolean,
-         required: true,
+         type: Schema.Types.Number,
+         required: false,
+         default: 1
       },
    },
    { timestamps: true, versionKey: false, toJSON: { virtuals: true }, collection: "featured" },

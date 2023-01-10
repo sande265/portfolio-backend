@@ -12,7 +12,10 @@ export const Constants = {
    validationRule: {
       name: ["required"],
       media: ["required"],
-      status: ["required"],
+      status: ["required", {
+         param: "in",
+         values: [1, 0]
+      }],
    },
    fileSize: Config.fileSizeLimit,
 };

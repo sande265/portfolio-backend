@@ -19,8 +19,9 @@ const AttachmentSchema: Schema = new Schema(
          default: null,
       },
       status: {
-         type: Schema.Types.Boolean,
-         required: true,
+         type: Schema.Types.Number,
+         required: false,
+         default: 1
       },
    },
    { timestamps: true, versionKey: false, collection: "attachments" },

@@ -12,7 +12,10 @@ export const Constants = {
       github: ["string"],
       external: ["string"],
       html: ["string"],
-      status: ["required"],
+      status: ["required", {
+         param: "in",
+         values: [1, 0]
+      }],
       order: ["required"]
    },
 };

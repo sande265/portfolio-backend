@@ -28,7 +28,7 @@ const AboutSchema: Schema = new Schema(
          ref: "Attachment",
          required: true,
       },
-      showcase: [
+      organization: [
          {
             type: Schema.Types.ObjectId,
             ref: "Organization",
@@ -36,8 +36,9 @@ const AboutSchema: Schema = new Schema(
          },
       ],
       status: {
-         type: Schema.Types.Boolean,
-         required: true
+         type: Schema.Types.Number,
+         required: false,
+         default: 1
       },
       tech_stack: {
          type: Schema.Types.Array,
