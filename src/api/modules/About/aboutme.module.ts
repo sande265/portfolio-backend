@@ -1,15 +1,18 @@
 import { About } from "../../Schemas";
 
-export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Function) => {
+export const index = ({ limit, page, sortBy, filter, sortField }: queryParams, callback: Function) => {
    const skips = page * limit - limit;
    try {
-      About.find(filter, {}, { limit: limit, sort: sortBy, skip: skips })
+      About.find(filter)
          .populate({
-            path: "showcase",
+            path: "organization",
             select: "name organization website country location description",
          })
          .populate({ path: "attachment", select: "name media height width" })
          .populate({ path: "resume", select: "name media" })
+         .limit(limit)
+         .skip(skips)
+         .sort(sortField && sortBy ? { [sortField]: sortBy === "asc" ? 1 : -1 } : {})
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);

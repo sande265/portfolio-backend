@@ -1,13 +1,16 @@
 import { Experience } from "../../Schemas";
 
-export const index = ({ limit, page, sortBy, filter }: queryParams, callback: Function) => {
+export const index = ({ limit, page, sortBy, sortField, filter }: queryParams, callback: Function) => {
    const skips = page * limit - limit;
    try {
-      Experience.find(filter, {}, { limit: limit, sort: sortBy, skip: skips })
+      Experience.find(filter)
          .populate({
             path: "organization",
             select: "name organization website country location",
          })
+         .limit(limit)
+         .skip(skips)
+         .sort(sortField && sortBy ? { [sortField]: sortBy === "asc" ? 1 : -1 } : {})
          .lean()
          .exec((error: any, result: any) => {
             if (error) callback(error);

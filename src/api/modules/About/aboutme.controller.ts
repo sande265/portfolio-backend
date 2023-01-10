@@ -133,7 +133,7 @@ export const getAbouts = async (req: Request, res: Response) => {
       ...filter,
    };
 
-   if (q) itemFilter = { ...itemFilter, title: { $regex: ".*" + q + ".*" } };
+   if (q) itemFilter = { ...itemFilter, title: { $regex: q, $options: "i" } };
 
    const count = await About.countDocuments(itemFilter);
 

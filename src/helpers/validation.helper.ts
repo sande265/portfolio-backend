@@ -43,17 +43,14 @@ export const localValidation = (
       const r = rule;
 
       if (typeof rule === "object") {
-         let { param, values, model, key } = rule;
+         let { param, values } = rule;
          switch (param) {
             case "in":
-               return !values?.find((x: DataObj) => (x?.toString()?.toLowerCase() === value?.toString()?.toLowerCase() ? false : true))
-                  ? [capitalString(name) + " is invalid. avaiable options: " + values.join(", ")]
-                  : null;
-            case "exists":
-               // const data = await model.findOne({ [key]: value });
-               // console.log('data', data);
-               // return [JSON.stringify(data)]
-               return null 
+               const hasValue = values?.find((x: DataObj) => x?.toString()?.toLowerCase() === value?.toString()?.toLowerCase());
+               if (hasValue === undefined || hasValue === null) {
+                  return [capitalString(name) + " is invalid. avaiable options: " + values.join(", ")]
+               }
+               return null
             default:
                return null;
          }
@@ -161,7 +158,8 @@ export const localValidation = (
             }
          }
          case "*":
-            {}
+            {
+            }
             break;
          default:
             return null;
